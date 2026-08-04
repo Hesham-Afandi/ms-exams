@@ -1,5 +1,6 @@
 import React from 'react';
-import { ExamViewMode, StudentInfo } from '../types';
+import { ExamViewMode, Language, StudentInfo } from '../types';
+import { getTranslation } from '../data/translations';
 import { 
   FileText, 
   Monitor, 
@@ -10,12 +11,15 @@ import {
   RotateCcw, 
   Download,
   Sparkles,
-  LayoutGrid
+  LayoutGrid,
+  Globe
 } from 'lucide-react';
 
 interface HeaderProps {
   viewMode: ExamViewMode;
   setViewMode: (mode: ExamViewMode) => void;
+  language: Language;
+  setLanguage: (lang: Language) => void;
   timerSeconds: number;
   isTimerRunning: boolean;
   setIsTimerRunning: (running: boolean) => void;
@@ -34,6 +38,8 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
   viewMode,
   setViewMode,
+  language,
+  setLanguage,
   timerSeconds,
   isTimerRunning,
   setIsTimerRunning,
@@ -48,6 +54,8 @@ export const Header: React.FC<HeaderProps> = ({
   onResetProgress,
   studentInfo,
 }) => {
+  const t = (key: keyof typeof import('../data/translations').translations['en']) => getTranslation(language, key);
+
   const formatTime = (totalSeconds: number) => {
     const mins = Math.floor(totalSeconds / 60);
     const secs = totalSeconds % 60;
@@ -57,30 +65,43 @@ export const Header: React.FC<HeaderProps> = ({
   const progressPercent = Math.round((completedTaskIds.length / totalTasksCount) * 100) || 0;
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-900 text-white shadow-xl border-b border-slate-800 no-print" dir="ltr">
+    <header className="sticky top-0 z-40 bg-slate-900 text-white shadow-xl border-b border-slate-800 no-print" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {/* Top Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row items-center justify-between py-3 gap-4">
+        <div className="flex flex-col lg:flex-row items-center justify-between py-3 gap-4">
           
-          {/* Logo & Title */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setViewMode('home')}
-              className="w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-md shadow-blue-500/20 hover:scale-105 transition-transform"
-              title="Return to Office Suite Portal"
-            >
-              <LayoutGrid className="w-6 h-6 text-white" />
-            </button>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="bg-blue-500/20 text-blue-300 text-xs px-2 py-0.5 rounded-md border border-blue-500/30 font-semibold">
-                  Comprehensive Portal
-                </span>
-                <span className="text-xs text-slate-400 font-mono">MS Office 2026</span>
+          {/* Logo & Title & Language Toggle */}
+          <div className="flex items-center justify-between w-full lg:w-auto gap-3">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setViewMode('home')}
+                className="w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-md shadow-blue-500/20 hover:scale-105 transition-transform"
+                title="Return to Office Suite Portal"
+              >
+                <LayoutGrid className="w-6 h-6 text-white" />
+              </button>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="bg-blue-500/20 text-blue-300 text-xs px-2 py-0.5 rounded-md border border-blue-500/30 font-semibold">
+                    {t('portalBadge')}
+                  </span>
+                  <span className="text-xs text-slate-400 font-mono">MS Office 2026</span>
+                </div>
+                <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                  {t('portalTitle')}
+                </h1>
               </div>
-              <h1 className="text-lg font-bold text-white tracking-tight">
-                Microsoft Office Practical Exams Suite
-              </h1>
+            </div>
+
+            {/* Mobile Language Toggle */}
+            <div className="flex lg:hidden items-center bg-slate-800 p-1 rounded-xl border border-slate-700 shrink-0">
+              <button
+                onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
+                className="flex items-center gap-1 px-2 py-1 text-xs font-bold text-blue-300 hover:bg-slate-700 rounded-lg transition"
+              >
+                <Globe className="w-3.5 h-3.5" />
+                <span>{language === 'ar' ? '🇪🇬 العربية' : '🇺🇸 EN'}</span>
+              </button>
             </div>
           </div>
 
@@ -96,7 +117,7 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <LayoutGrid className="w-3.5 h-3.5 text-blue-400" />
-              <span>Office Portal</span>
+              <span>{t('navOfficePortal')}</span>
             </button>
 
             <button
@@ -109,7 +130,7 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <FileText className="w-3.5 h-3.5" />
-              <span>Word Tasks</span>
+              <span>{t('navWordTasks')}</span>
             </button>
 
             <button
@@ -122,7 +143,7 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <Monitor className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Live Simulator</span>
+              <span>{t('navLiveSimulator')}</span>
               <span className="bg-emerald-500/20 text-emerald-300 text-[10px] px-1.5 py-0.2 rounded font-mono">LIVE</span>
             </button>
 
@@ -136,7 +157,7 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <Printer className="w-3.5 h-3.5 text-amber-400" />
-              <span>Paper Exam</span>
+              <span>{t('navPaperExam')}</span>
             </button>
 
             <button
@@ -149,12 +170,42 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <BookOpen className="w-3.5 h-3.5 text-purple-400" />
-              <span>Teacher Key</span>
+              <span>{t('navTeacherKey')}</span>
             </button>
           </div>
 
-          {/* Timer & Quick Score Stats */}
+          {/* Language Switcher, Timer & Quick Score Stats */}
           <div className="flex items-center gap-3">
+            {/* Desktop Language Switcher */}
+            <div className="hidden lg:flex items-center bg-slate-800/90 p-1 rounded-xl border border-slate-700/80 shadow-inner">
+              <button
+                id="lang-ar-btn"
+                onClick={() => setLanguage('ar')}
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                  language === 'ar'
+                    ? 'bg-blue-600 text-white shadow'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
+                }`}
+                title="تغيير اللغة إلى العربية (مصر)"
+              >
+                <span className="text-xs">🇪🇬</span>
+                <span>العربية (EG)</span>
+              </button>
+              <button
+                id="lang-en-btn"
+                onClick={() => setLanguage('en')}
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                  language === 'en'
+                    ? 'bg-blue-600 text-white shadow'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
+                }`}
+                title="Switch language to English (US)"
+              >
+                <span className="text-xs">🇺🇸</span>
+                <span>English (US)</span>
+              </button>
+            </div>
+
             {/* Timer Box */}
             <div className="flex items-center gap-2 bg-slate-800/80 border border-slate-700 px-3 py-1.5 rounded-xl text-slate-200">
               <Clock className={`w-4 h-4 ${isTimerRunning ? 'text-amber-400 animate-pulse' : 'text-slate-400'}`} />
@@ -167,7 +218,7 @@ export const Header: React.FC<HeaderProps> = ({
                 className="text-xs bg-slate-700 hover:bg-slate-600 text-slate-200 px-2 py-0.5 rounded transition"
                 title={isTimerRunning ? "Pause Timer" : "Start Timer"}
               >
-                {isTimerRunning ? 'Pause' : 'Start'}
+                {isTimerRunning ? t('timerPause') : t('timerStart')}
               </button>
             </div>
 
@@ -178,7 +229,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-3.5 py-1.5 rounded-xl font-bold text-xs shadow-md transition-all border border-emerald-400/30"
             >
               <Award className="w-4 h-4 text-yellow-300" />
-              <span>Score: {earnedPoints} / {totalPoints}</span>
+              <span>{t('scoreLabel')}: {earnedPoints} / {totalPoints}</span>
             </button>
           </div>
 
@@ -189,9 +240,9 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Progress Indicator */}
           <div className="flex items-center gap-3">
             <span className="font-semibold text-slate-200">
-              Completion: {completedTaskIds.length} of {totalTasksCount} tasks ({progressPercent}%)
+              {t('completionLabel')}: {completedTaskIds.length} / {totalTasksCount} ({progressPercent}%)
             </span>
-            <div className="w-32 sm:w-48 bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700">
+            <div className="w-28 sm:w-44 bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700">
               <div 
                 className="bg-gradient-to-r from-blue-500 to-emerald-400 h-full transition-all duration-500 rounded-full"
                 style={{ width: `${progressPercent}%` }}
@@ -207,7 +258,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-blue-300 px-2.5 py-1 rounded-lg border border-blue-500/20 transition text-xs font-semibold"
             >
               <Download className="w-3.5 h-3.5 text-blue-400" />
-              <span>Data Pack</span>
+              <span>{t('dataPackBtn')}</span>
             </button>
 
             <button
@@ -216,7 +267,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-purple-300 px-2.5 py-1 rounded-lg border border-purple-500/20 transition text-xs font-semibold"
             >
               <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-              <span>Answer Key</span>
+              <span>{t('answerKeyBtn')}</span>
             </button>
 
             <button
@@ -226,7 +277,7 @@ export const Header: React.FC<HeaderProps> = ({
               title="Reset progress and restart exam"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset</span>
+              <span>{t('resetBtn')}</span>
             </button>
           </div>
         </div>
@@ -234,3 +285,4 @@ export const Header: React.FC<HeaderProps> = ({
     </header>
   );
 };
+

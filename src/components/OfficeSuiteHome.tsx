@@ -13,10 +13,12 @@ import {
   Layers,
   GraduationCap
 } from 'lucide-react';
-import { OfficeAppSection } from '../types';
+import { Language, OfficeAppSection } from '../types';
+import { getTranslation } from '../data/translations';
 
 interface OfficeSuiteHomeProps {
   onSelectApp: (appId: 'word' | 'excel' | 'powerpoint' | 'access') => void;
+  language: Language;
   earnedPoints: number;
   totalPoints: number;
   completedTasksCount: number;
@@ -100,11 +102,14 @@ export const OFFICE_APPS: OfficeAppSection[] = [
 
 export const OfficeSuiteHome: React.FC<OfficeSuiteHomeProps> = ({
   onSelectApp,
+  language,
   earnedPoints,
   totalPoints,
   completedTasksCount,
   totalTasksCount,
 }) => {
+  const t = (key: keyof typeof import('../data/translations').translations['en']) => getTranslation(language, key);
+
   const getIconComponent = (iconName: string) => {
     switch (iconName) {
       case 'FileText': return <FileText className="w-8 h-8 text-blue-600" />;
@@ -116,7 +121,7 @@ export const OfficeSuiteHome: React.FC<OfficeSuiteHomeProps> = ({
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" dir="ltr">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       
       {/* Hero Header Section */}
       <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white rounded-3xl p-8 sm:p-10 shadow-2xl relative overflow-hidden mb-10 border border-slate-800">
@@ -126,15 +131,15 @@ export const OfficeSuiteHome: React.FC<OfficeSuiteHomeProps> = ({
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 bg-blue-500/20 text-blue-300 text-xs font-bold px-3 py-1 rounded-full border border-blue-400/30 mb-3">
               <GraduationCap className="w-4 h-4 text-blue-400" />
-              <span>Official Microsoft Office Assessment Suite 2026</span>
+              <span>MS Office Assessment Portal 2026</span>
             </div>
             
             <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
-              Microsoft Office Practical Exams Portal
+              {t('homeTitle')}
             </h1>
             
             <p className="text-slate-300 text-sm sm:text-base mt-2 leading-relaxed">
-              Select an Office application to start your practical exam. Practice interactive tasks, simulate real ribbon commands, print official paper exams, and verify your technical skills.
+              {t('homeSubtitle')}
             </p>
           </div>
 
@@ -144,12 +149,14 @@ export const OfficeSuiteHome: React.FC<OfficeSuiteHomeProps> = ({
               <Award className="w-7 h-7 text-yellow-300" />
             </div>
             <div>
-              <div className="text-xs text-slate-400 font-medium">MS Word Exam Progress</div>
+              <div className="text-xs text-slate-400 font-medium">
+                {language === 'ar' ? 'تقدم اختبار وورد' : 'MS Word Exam Progress'}
+              </div>
               <div className="text-xl font-black text-white">
                 {earnedPoints} / {totalPoints} <span className="text-xs text-emerald-400 font-normal">pts</span>
               </div>
               <div className="text-[11px] text-slate-400">
-                {completedTasksCount} of {totalTasksCount} tasks completed
+                {completedTasksCount} / {totalTasksCount} {t('tasksCompleted')}
               </div>
             </div>
           </div>
@@ -161,11 +168,15 @@ export const OfficeSuiteHome: React.FC<OfficeSuiteHomeProps> = ({
         <div>
           <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
             <Layers className="w-5 h-5 text-blue-600" />
-            <span>Select Microsoft Office Application Exam</span>
+            <span>
+              {language === 'ar' ? 'اختر تطبيق مايكروسوفت أوفيس للتقييم' : 'Select Microsoft Office Application Exam'}
+            </span>
           </h2>
-          <p className="text-xs text-slate-500">Choose an exam section to launch directly</p>
+          <p className="text-xs text-slate-500">
+            {language === 'ar' ? 'اختر التطبيق للبدء مباشرة في التقييم' : 'Choose an exam section to launch directly'}
+          </p>
         </div>
-        <span className="text-xs text-slate-400 font-medium">4 Primary Applications</span>
+        <span className="text-xs text-slate-400 font-medium">4 Applications</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
@@ -191,28 +202,39 @@ export const OfficeSuiteHome: React.FC<OfficeSuiteHomeProps> = ({
                         ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
                         : 'bg-amber-100 text-amber-900 border border-amber-300'
                     }`}>
-                      {app.badgeText}
+                      {app.isAvailable 
+                        ? (language === 'ar' ? 'متاح الآن • اختبار 100 درجة' : app.badgeText) 
+                        : (language === 'ar' ? 'قريباً إن شاء الله' : app.badgeText)}
                     </span>
                     <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                      {app.title}
+                      {app.id === 'word' && language === 'ar' ? 'اختبار مايكروسوفت وورد العملي' : app.title}
                     </h3>
                   </div>
                 </div>
               </div>
 
               <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                {app.description}
+                {app.id === 'word' && language === 'ar' 
+                  ? 'اختبار عملي متكامل يغطي إعدادات الصفحة، تنسيق النصوص، الجداول المتقدمة والصيغ، رسومات SmartArt، الجدول الآلي، والدمج البريدي.' 
+                  : app.description}
               </p>
 
               {/* Feature Highlights */}
               <div className="space-y-2 mb-6 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                  Exam Scope & Features:
+                  {language === 'ar' ? 'نطاق مميزات القسم:' : 'Exam Scope & Features:'}
                 </span>
                 {app.features.map((feat, idx) => (
                   <div key={idx} className="flex items-center gap-2 text-xs text-slate-700">
                     <CheckCircle2 className={`w-3.5 h-3.5 ${app.isAvailable ? 'text-blue-600' : 'text-slate-400'} shrink-0`} />
-                    <span>{feat}</span>
+                    <span>
+                      {app.id === 'word' && language === 'ar' ? [
+                        '6 وحدات اختبارية شاملة',
+                        'محاكي تفاعلي مباشر لبرنامج وورد',
+                        'ورقة اختبار ورقية رسمية قابلة للطباعة',
+                        'دليل إجابة المشرف والتقييم الآلي'
+                      ][idx] || feat : feat}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -230,8 +252,12 @@ export const OfficeSuiteHome: React.FC<OfficeSuiteHomeProps> = ({
                   : 'bg-slate-800 hover:bg-slate-700 text-white'
               }`}
             >
-              <span>{app.isAvailable ? 'Start Word Exam Now' : 'Open Section (Coming Soon)'}</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>
+                {app.isAvailable 
+                  ? (language === 'ar' ? 'ابدأ اختبار وورد الآن' : t('startWordExam')) 
+                  : (language === 'ar' ? 'قريباً إن شاء الله' : t('comingSoon'))}
+              </span>
+              <ArrowRight className={`w-4 h-4 ${language === 'ar' ? 'rotate-180' : ''}`} />
             </button>
 
           </div>
@@ -241,3 +267,4 @@ export const OfficeSuiteHome: React.FC<OfficeSuiteHomeProps> = ({
     </div>
   );
 };
+

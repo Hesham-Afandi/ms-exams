@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ExamViewMode, StudentInfo, OfficeAppSection } from './types';
+import { ExamViewMode, Language, StudentInfo, OfficeAppSection } from './types';
 import { EXAM_MODULES } from './data/examData';
 import { Header } from './components/Header';
 import { OfficeSuiteHome, OFFICE_APPS } from './components/OfficeSuiteHome';
@@ -12,11 +12,13 @@ import { AnswerKeyModal } from './components/AnswerKeyModal';
 import { ScoreModal } from './components/ScoreModal';
 import { ComingSoonModal } from './components/ComingSoonModal';
 import { MODEL_ANSWER_RUBRIC } from './data/examData';
+import { getTranslation } from './data/translations';
 import { BookOpen, Sparkles, CheckCircle2, Award, Printer, ArrowLeft } from 'lucide-react';
 
 export function App() {
 
   const [viewMode, setViewMode] = useState<ExamViewMode>('home');
+  const [language, setLanguage] = useState<Language>('ar');
   const [completedTaskIds, setCompletedTaskIds] = useState<string[]>([]);
   
   // Timer state (60 minutes default = 3600 seconds)
@@ -105,12 +107,14 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900 font-sans flex flex-col antialiased selection:bg-blue-600 selection:text-white" dir="ltr">
+    <div className="min-h-screen bg-slate-100 text-slate-900 font-sans flex flex-col antialiased selection:bg-blue-600 selection:text-white" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       
       {/* Top Header Navigation */}
       <Header
         viewMode={viewMode}
         setViewMode={setViewMode}
+        language={language}
+        setLanguage={setLanguage}
         timerSeconds={timerSeconds}
         isTimerRunning={isTimerRunning}
         setIsTimerRunning={setIsTimerRunning}
@@ -133,6 +137,7 @@ export function App() {
         {viewMode === 'home' && (
           <OfficeSuiteHome
             onSelectApp={handleSelectApp}
+            language={language}
             earnedPoints={earnedPoints}
             totalPoints={totalPoints}
             completedTasksCount={completedTaskIds.length}
@@ -150,8 +155,10 @@ export function App() {
                 onClick={() => setViewMode('home')}
                 className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-blue-600 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm transition"
               >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Return to Office Suite Portal</span>
+                <ArrowLeft className={`w-4 h-4 ${language === 'ar' ? 'rotate-180' : ''}`} />
+                <span>
+                  {language === 'ar' ? 'العودة إلى بوابة أوفيس' : 'Return to Office Suite Portal'}
+                </span>
               </button>
             </div>
 
@@ -159,6 +166,7 @@ export function App() {
             <ExamHero
               studentInfo={studentInfo}
               setStudentInfo={setStudentInfo}
+              language={language}
               onStartExam={() => setViewMode('simulator')}
               onOpenDataPack={() => setIsDataPackOpen(true)}
               completedTasksCount={completedTaskIds.length}
@@ -170,10 +178,16 @@ export function App() {
             {/* Exam Modules Section */}
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-slate-900">
-                Exam Modules Checklist (6 Modules • 100 Points)
+                {language === 'ar' 
+                  ? 'قائمة وحدات الاختبار (6 وحدات • 100 درجة)'
+                  : 'Exam Modules Checklist (6 Modules • 100 Points)'
+                }
               </h2>
               <span className="text-xs text-slate-500 font-medium">
-                Click task checkboxes or try inside Live Simulator
+                {language === 'ar'
+                  ? 'انقر على مربعات الاختيار أو استخدم المحاكي التفاعلي المباشر'
+                  : 'Click task checkboxes or try inside Live Simulator'
+                }
               </span>
             </div>
 
@@ -201,19 +215,25 @@ export function App() {
                   onClick={() => setViewMode('exam')}
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-blue-600 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm transition mb-1"
                 >
-                  <ArrowLeft className="w-4 h-4" />
-                  <span>Back to Exam Question List</span>
+                  <ArrowLeft className={`w-4 h-4 ${language === 'ar' ? 'rotate-180' : ''}`} />
+                  <span>
+                    {language === 'ar' ? 'العودة لقائمة أسئلة الاختبار' : 'Back to Exam Question List'}
+                  </span>
                 </button>
                 <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-emerald-600" />
-                  <span>Microsoft Word Live Interactive Simulator</span>
+                  <span>
+                    {language === 'ar' ? 'المحاكي المباشر لبرنامج مايكروسوفت وورد' : 'Microsoft Word Live Interactive Simulator'}
+                  </span>
                 </h2>
               </div>
               
               <div className="text-right">
-                <span className="text-xs text-slate-500 block">Auto-Grading Progress:</span>
+                <span className="text-xs text-slate-500 block">
+                  {language === 'ar' ? 'التقييم التلقائي:' : 'Auto-Grading Progress:'}
+                </span>
                 <span className="text-base font-bold text-emerald-600 font-mono">
-                  {earnedPoints} / {totalPoints} Pts Earned
+                  {earnedPoints} / {totalPoints} Pts
                 </span>
               </div>
             </div>
@@ -246,9 +266,11 @@ export function App() {
                   </div>
                   <div>
                     <h2 className="text-2xl font-black text-slate-900">
-                      Teacher Guide & Model Evaluation Rubric
+                      {language === 'ar' ? 'دليل المعلم ونموذج التقييم والإجابة' : 'Teacher Guide & Model Evaluation Rubric'}
                     </h2>
-                    <p className="text-xs text-slate-500">Official criteria and command paths for grading MS Word practical exams</p>
+                    <p className="text-xs text-slate-500">
+                      {language === 'ar' ? 'المعايير الرسمية ومسارات الأوامر لتقييم اختبار وورد العملي' : 'Official criteria and command paths for grading MS Word practical exams'}
+                    </p>
                   </div>
                 </div>
 
@@ -257,7 +279,7 @@ export function App() {
                   className="flex items-center gap-1.5 bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-bold shadow transition hover:bg-slate-800"
                 >
                   <Printer className="w-4 h-4" />
-                  <span>Print Rubric</span>
+                  <span>{language === 'ar' ? 'طباعة الدليل' : 'Print Rubric'}</span>
                 </button>
               </div>
 
@@ -265,10 +287,10 @@ export function App() {
                 <table className="w-full text-xs text-left border-collapse">
                   <thead>
                     <tr className="bg-slate-900 text-white font-bold">
-                      <th className="p-3">Module Name</th>
-                      <th className="p-3">Evaluation Criteria</th>
-                      <th className="p-3">Command & Ribbon Steps</th>
-                      <th className="p-3 text-center">Score</th>
+                      <th className="p-3">{language === 'ar' ? 'الوحدة' : 'Module Name'}</th>
+                      <th className="p-3">{language === 'ar' ? 'معايير التقييم' : 'Evaluation Criteria'}</th>
+                      <th className="p-3">{language === 'ar' ? 'خطوات الأوامر والشريط' : 'Command & Ribbon Steps'}</th>
+                      <th className="p-3 text-center">{language === 'ar' ? 'الدرجة' : 'Score'}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -290,14 +312,16 @@ export function App() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 no-print" dir="ltr">
+      <footer className="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 no-print" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block animate-pulse" />
-            <span className="font-semibold text-slate-300">Microsoft Office Practical Exams Portal 2026</span>
+            <span className="font-semibold text-slate-300">
+              {language === 'ar' ? 'منصة الاختبارات العملية لمايكروسوفت أوفيس 2026' : 'Microsoft Office Practical Exams Portal 2026'}
+            </span>
           </div>
           <div className="flex items-center gap-2 text-slate-300 font-medium">
-            <span>Created by</span>
+            <span>{language === 'ar' ? 'إعداد وتصميم:' : 'Created by'}</span>
             <span className="bg-blue-600/20 text-blue-300 px-3 py-1 rounded-lg border border-blue-500/30 font-bold tracking-wide">
               Mr. Mohammed Hesham
             </span>

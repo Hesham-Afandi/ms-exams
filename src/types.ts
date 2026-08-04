@@ -1,4 +1,5 @@
 export type ExamViewMode = 'home' | 'exam' | 'simulator' | 'printable' | 'teacher';
+export type Language = 'en' | 'ar';
 
 export interface Task {
   id: string;
