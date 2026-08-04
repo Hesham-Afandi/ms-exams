@@ -1,0 +1,6 @@
+{
+  "name": "Microsoft Office Practical Exams Suite (MS Word, Excel, PowerPoint, Access)",
+  "description": "Comprehensive practical examination portal for Microsoft Office with full MS Word exam, interactive simulator, data pack downloads, auto-grader, printable paper exams, and teacher rubric.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

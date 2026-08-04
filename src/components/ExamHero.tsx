@@ -1,0 +1,211 @@
+import React from 'react';
+import { StudentInfo } from '../types';
+import { ASSET_IMAGES } from '../data/examData';
+import { 
+  UserCheck, 
+  School, 
+  Calendar, 
+  Hash, 
+  FileSpreadsheet, 
+  AlertCircle, 
+  CheckCircle, 
+  Sparkles,
+  Award
+} from 'lucide-react';
+
+interface ExamHeroProps {
+  studentInfo: StudentInfo;
+  setStudentInfo: React.Dispatch<React.SetStateAction<StudentInfo>>;
+  onStartExam: () => void;
+  onOpenDataPack: () => void;
+  completedTasksCount: number;
+  totalTasksCount: number;
+  totalPoints: number;
+  earnedPoints: number;
+}
+
+export const ExamHero: React.FC<ExamHeroProps> = ({
+  studentInfo,
+  setStudentInfo,
+  onStartExam,
+  onOpenDataPack,
+  completedTasksCount,
+  totalTasksCount,
+  totalPoints,
+  earnedPoints,
+}) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setStudentInfo(prev => ({ ...prev, [name]: value }));
+  };
+
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden mb-8" dir="ltr">
+      {/* Visual Header Banner - Clean English Text Banner (No Image) */}
+      <div className="relative p-6 sm:p-8 bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 overflow-hidden border-b border-blue-900/50">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none" />
+        
+        {/* Banner Content */}
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 text-white">
+          <div className="max-w-3xl">
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              <span className="bg-blue-600/90 text-white text-xs font-bold px-3 py-1 rounded-md shadow border border-blue-400/30">
+                Official Practical Assessment 2026
+              </span>
+              <span className="bg-emerald-500/20 text-emerald-300 text-xs px-3 py-1 rounded-md border border-emerald-500/40 font-semibold">
+                100 Total Points • 6 Modules
+              </span>
+              <span className="bg-purple-500/20 text-purple-300 text-xs px-2.5 py-1 rounded-md border border-purple-500/30 font-medium">
+                English Edition
+              </span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+              Microsoft Word Practical Examination
+            </h2>
+            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mt-2">
+              Comprehensive evaluation of core Microsoft Word skills: Page Setup, Typography, Advanced Tables & Formulas, SmartArt & Diagrams, Dynamic Heading Styles, Auto TOC, Mail Merge, and PDF Export.
+            </p>
+          </div>
+
+          {/* Quick Score Badge */}
+          <div className="bg-slate-900/90 backdrop-blur border border-slate-700/80 p-4 rounded-2xl flex items-center gap-4 shrink-0 shadow-lg">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 flex items-center justify-center font-black text-xl font-mono shadow">
+              {earnedPoints}
+            </div>
+            <div>
+              <div className="text-[11px] text-slate-400 font-medium uppercase tracking-wider">Earned Score</div>
+              <div className="text-xs font-bold text-white">out of {totalPoints} total pts</div>
+              <div className="text-[10px] text-emerald-400 mt-0.5 font-semibold">
+                {completedTasksCount} / {totalTasksCount} tasks completed
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Student Details Form & Exam Instructions */}
+      <div className="p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* Student Info Card */}
+          <div className="lg:col-span-2 bg-slate-50 rounded-xl p-5 border border-slate-200">
+            <div className="flex items-center gap-2 mb-4">
+              <UserCheck className="w-5 h-5 text-blue-600" />
+              <h3 className="font-bold text-slate-800 text-base">Student / Trainee Registration</h3>
+              <span className="text-xs text-slate-500 font-normal ml-auto">Appears on official result card</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1">
+                  <UserCheck className="w-3.5 h-3.5 text-slate-400" />
+                  Full Student Name:
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={studentInfo.name}
+                  onChange={handleChange}
+                  placeholder="Enter full name..."
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1">
+                  <Hash className="w-3.5 h-3.5 text-slate-400" />
+                  Seat / Academic ID:
+                </label>
+                <input
+                  type="text"
+                  name="seatNumber"
+                  value={studentInfo.seatNumber}
+                  onChange={handleChange}
+                  placeholder="e.g. 2026-8492"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1">
+                  <School className="w-3.5 h-3.5 text-slate-400" />
+                  Institution / University / School:
+                </label>
+                <input
+                  type="text"
+                  name="institution"
+                  value={studentInfo.institution}
+                  onChange={handleChange}
+                  placeholder="Enter institution name..."
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1">
+                  <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                  Group Section & Date:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="text"
+                    name="group"
+                    value={studentInfo.group}
+                    onChange={handleChange}
+                    placeholder="Section A"
+                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <input
+                    type="text"
+                    name="date"
+                    value={studentInfo.date}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Exam Instructions & Data Pack Quick Buttons */}
+          <div className="bg-blue-50/60 rounded-xl p-5 border border-blue-100 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <AlertCircle className="w-5 h-5 text-blue-700" />
+                <h3 className="font-bold text-blue-900 text-base">Practical Exam Instructions</h3>
+              </div>
+
+              <ul className="text-xs text-blue-900 space-y-2 leading-relaxed">
+                <li className="flex items-start gap-1.5">
+                  <CheckCircle className="w-3.5 h-3.5 text-blue-600 mt-0.5 shrink-0" />
+                  <span>Execute all tasks either in **Microsoft Word** on your PC or inside our **built-in Live Simulator**.</span>
+                </li>
+                <li className="flex items-start gap-1.5">
+                  <CheckCircle className="w-3.5 h-3.5 text-blue-600 mt-0.5 shrink-0" />
+                  <span>Follow exact ribbon paths, font sizes, margins, and colors specified in each task.</span>
+                </li>
+                <li className="flex items-start gap-1.5">
+                  <CheckCircle className="w-3.5 h-3.5 text-blue-600 mt-0.5 shrink-0" />
+                  <span>Use the **Data Pack** button to copy raw document text and Mail Merge dataset instantly.</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="mt-4 pt-3 border-t border-blue-200/60 flex flex-col gap-2">
+              <button
+                onClick={onOpenDataPack}
+                className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-bold text-xs shadow-md transition"
+              >
+                <FileSpreadsheet className="w-4 h-4" />
+                <span>Download / Copy Exam Data Pack</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+};
