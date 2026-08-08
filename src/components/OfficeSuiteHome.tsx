@@ -70,14 +70,14 @@ export const OFFICE_APPS: OfficeAppSection[] = [
     brandColor: 'bg-orange-600 hover:bg-orange-700 text-white',
     lightBg: 'bg-orange-50/70',
     borderColor: 'border-orange-200 hover:border-orange-400',
-    badgeText: 'Coming Soon Insha\'Allah',
-    isAvailable: false,
-    description: 'Upcoming practical exam covering Master Slide layouts, Custom Motion Animations, Slide Transitions, Audio/Video, and Kiosk modes.',
+    badgeText: 'Active • 100 Points Full Exam',
+    isAvailable: true,
+    description: 'Comprehensive practical exam covering Master Slide layouts, Custom Motion Animations, Slide Transitions, SmartArt Diagrams, Audio/Video, and Presenter View.',
     features: [
-      'Slide Master Theme & Palette Customization',
-      'Trigger Animations & Motion Paths',
-      'Infographic SmartArt & Vector Diagrams',
-      'Interactive Presentation Simulator'
+      '6 Comprehensive Practical Modules',
+      'Live Interactive Presentation Simulator',
+      'Morph Transitions & Trigger Animations',
+      'Teacher Answer Key & Auto Grader'
     ]
   },
   {
@@ -207,16 +207,24 @@ export const OfficeSuiteHome: React.FC<OfficeSuiteHomeProps> = ({
                         : (language === 'ar' ? 'قريباً إن شاء الله' : app.badgeText)}
                     </span>
                     <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                      {app.id === 'word' && language === 'ar' ? 'اختبار مايكروسوفت وورد العملي' : app.title}
+                      {language === 'ar' ? (
+                        app.id === 'word' ? 'اختبار مايكروسوفت وورد العملي' :
+                        app.id === 'powerpoint' ? 'اختبار مايكروسوفت باوربوينت العملي' :
+                        app.title
+                      ) : app.title}
                     </h3>
                   </div>
                 </div>
               </div>
 
               <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                {app.id === 'word' && language === 'ar' 
-                  ? 'اختبار عملي متكامل يغطي إعدادات الصفحة، تنسيق النصوص، الجداول المتقدمة والصيغ، رسومات SmartArt، الجدول الآلي، والدمج البريدي.' 
-                  : app.description}
+                {language === 'ar' ? (
+                  app.id === 'word' 
+                    ? 'اختبار عملي متكامل يغطي إعدادات الصفحة، تنسيق النصوص، الجداول المتقدمة والصيغ، رسومات SmartArt، الجدول الآلي، والدمج البريدي.'
+                    : app.id === 'powerpoint'
+                    ? 'اختبار عملي متكامل يغطي الشريحة الرئيسية، نسق الألوان، حركات المشغلات، انتقالات Morph، وتصميم العروض التفاعلية.'
+                    : app.description
+                ) : app.description}
               </p>
 
               {/* Feature Highlights */}
@@ -228,12 +236,19 @@ export const OfficeSuiteHome: React.FC<OfficeSuiteHomeProps> = ({
                   <div key={idx} className="flex items-center gap-2 text-xs text-slate-700">
                     <CheckCircle2 className={`w-3.5 h-3.5 ${app.isAvailable ? 'text-blue-600' : 'text-slate-400'} shrink-0`} />
                     <span>
-                      {app.id === 'word' && language === 'ar' ? [
-                        '6 وحدات اختبارية شاملة',
-                        'محاكي تفاعلي مباشر لبرنامج وورد',
-                        'ورقة اختبار ورقية رسمية قابلة للطباعة',
-                        'دليل إجابة المشرف والتقييم الآلي'
-                      ][idx] || feat : feat}
+                      {language === 'ar' ? (
+                        app.id === 'word' ? [
+                          '6 وحدات اختبارية شاملة',
+                          'محاكي تفاعلي مباشر لبرنامج وورد',
+                          'ورقة اختبار ورقية رسمية قابلة للطباعة',
+                          'دليل إجابة المشرف والتقييم الآلي'
+                        ][idx] : app.id === 'powerpoint' ? [
+                          '6 وحدات اختبارية شاملة (100 درجة)',
+                          'محاكي تفاعلي مباشر لبرنامج باوربوينت',
+                          'مخططات SmartArt وحركات Morph التفاعلية',
+                          'دليل إجابة المعلم وفحص التقييم الآلي'
+                        ][idx] : feat
+                      ) : feat}
                     </span>
                   </div>
                 ))}
@@ -254,7 +269,7 @@ export const OfficeSuiteHome: React.FC<OfficeSuiteHomeProps> = ({
             >
               <span>
                 {app.isAvailable 
-                  ? (language === 'ar' ? 'ابدأ اختبار وورد الآن' : t('startWordExam')) 
+                  ? (language === 'ar' ? (app.id === 'powerpoint' ? 'ابدأ اختبار باوربوينت الآن' : 'ابدأ اختبار وورد الآن') : (app.id === 'powerpoint' ? 'Start PowerPoint Exam Now' : t('startWordExam'))) 
                   : (language === 'ar' ? 'قريباً إن شاء الله' : t('comingSoon'))}
               </span>
               <ArrowRight className={`w-4 h-4 ${language === 'ar' ? 'rotate-180' : ''}`} />

@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
 import { RAW_EXAM_TEXT, MAIL_MERGE_DATASET } from '../data/examData';
-import { Download, Copy, Check, FileText, Database, X } from 'lucide-react';
+import { RAW_PPT_PRESENTATION_OUTLINE } from '../data/powerpointExamData';
+import { Download, Copy, Check, FileText, Database, X, Presentation } from 'lucide-react';
 
 interface DataPackModalProps {
   isOpen: boolean;
   onClose: () => void;
+  selectedApp?: 'word' | 'excel' | 'powerpoint' | 'access';
 }
 
-export const DataPackModal: React.FC<DataPackModalProps> = ({ isOpen, onClose }) => {
+export const DataPackModal: React.FC<DataPackModalProps> = ({ isOpen, onClose, selectedApp = 'word' }) => {
   const [copiedText, setCopiedText] = useState(false);
   const [copiedTable, setCopiedTable] = useState(false);
 
   if (!isOpen) return null;
 
+  const activeText = selectedApp === 'powerpoint' ? RAW_PPT_PRESENTATION_OUTLINE : RAW_EXAM_TEXT;
+
   const handleCopyRawText = () => {
-    navigator.clipboard.writeText(RAW_EXAM_TEXT);
+    navigator.clipboard.writeText(activeText);
     setCopiedText(true);
     setTimeout(() => setCopiedText(false), 3000);
   };
@@ -71,7 +75,7 @@ export const DataPackModal: React.FC<DataPackModalProps> = ({ isOpen, onClose })
 
             <textarea
               readOnly
-              value={RAW_EXAM_TEXT}
+              value={activeText}
               rows={8}
               className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs text-slate-800 font-sans leading-relaxed focus:outline-none"
             />

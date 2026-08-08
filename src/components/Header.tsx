@@ -20,6 +20,8 @@ interface HeaderProps {
   setViewMode: (mode: ExamViewMode) => void;
   language: Language;
   setLanguage: (lang: Language) => void;
+  selectedApp?: 'word' | 'excel' | 'powerpoint' | 'access';
+  onSelectApp?: (appId: 'word' | 'excel' | 'powerpoint' | 'access') => void;
   timerSeconds: number;
   isTimerRunning: boolean;
   setIsTimerRunning: (running: boolean) => void;
@@ -40,6 +42,8 @@ export const Header: React.FC<HeaderProps> = ({
   setViewMode,
   language,
   setLanguage,
+  selectedApp = 'word',
+  onSelectApp,
   timerSeconds,
   isTimerRunning,
   setIsTimerRunning,
@@ -130,7 +134,11 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <FileText className="w-3.5 h-3.5" />
-              <span>{t('navWordTasks')}</span>
+              <span>
+                {selectedApp === 'powerpoint' 
+                  ? (language === 'ar' ? 'مهام باوربوينت' : t('navPptTasks')) 
+                  : (language === 'ar' ? 'مهام وورد' : t('navWordTasks'))}
+              </span>
             </button>
 
             <button

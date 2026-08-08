@@ -1,22 +1,28 @@
 import React from 'react';
 import { StudentInfo } from '../types';
 import { EXAM_MODULES } from '../data/examData';
+import { PPT_EXAM_MODULES } from '../data/powerpointExamData';
 import { Printer } from 'lucide-react';
 
 interface PrintableExamProps {
   studentInfo: StudentInfo;
   earnedPoints: number;
   totalPoints: number;
+  selectedApp?: 'word' | 'excel' | 'powerpoint' | 'access';
 }
 
 export const PrintableExam: React.FC<PrintableExamProps> = ({
   studentInfo,
   earnedPoints,
   totalPoints,
+  selectedApp = 'word',
 }) => {
   const handlePrint = () => {
     window.print();
   };
+
+  const activeModules = selectedApp === 'powerpoint' ? PPT_EXAM_MODULES : EXAM_MODULES;
+  const appTitle = selectedApp === 'powerpoint' ? 'Microsoft PowerPoint Practical Exam' : 'Microsoft Word Practical Exam';
 
   return (
     <div className="bg-slate-100 min-h-screen py-6 px-4" dir="ltr">
@@ -24,7 +30,7 @@ export const PrintableExam: React.FC<PrintableExamProps> = ({
       {/* Print Trigger Floating Bar */}
       <div className="max-w-4xl mx-auto mb-6 bg-white p-4 rounded-xl border border-slate-300 shadow-md flex items-center justify-between no-print">
         <div>
-          <h2 className="font-bold text-slate-800 text-sm">Official Printable Paper Exam Format</h2>
+          <h2 className="font-bold text-slate-800 text-sm">Official Printable Paper Exam Format ({selectedApp === 'powerpoint' ? 'PowerPoint' : 'Word'})</h2>
           <p className="text-xs text-slate-500">Ready for instant printing and physical distribution to exam hall candidates.</p>
         </div>
         <button
@@ -43,19 +49,19 @@ export const PrintableExam: React.FC<PrintableExamProps> = ({
         <div className="border-b-2 border-slate-900 pb-6 mb-6">
           <div className="flex items-start justify-between text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">
             <div className="text-left">
-              <div>Course: Microsoft Word Practical Exam</div>
+              <div>Course: {appTitle}</div>
               <div>Assessment Mode: Hands-On Simulator</div>
             </div>
 
             <div className="text-center px-4">
               <div className="w-16 h-16 mx-auto mb-1 border-2 border-slate-800 rounded-full flex items-center justify-center font-black text-lg bg-slate-50">
-                MS
+                {selectedApp === 'powerpoint' ? 'PPT' : 'MS'}
               </div>
-              <span className="text-xs block text-slate-600 font-mono">Word 2026</span>
+              <span className="text-xs block text-slate-600 font-mono">{selectedApp === 'powerpoint' ? 'PPT 2026' : 'Word 2026'}</span>
             </div>
 
             <div className="text-right">
-              <div>Subject: Microsoft Word (Practical)</div>
+              <div>Subject: {selectedApp === 'powerpoint' ? 'Microsoft PowerPoint' : 'Microsoft Word'}</div>
               <div>Exam Duration: 60 Minutes</div>
               <div>Total Marks: 100 Points</div>
             </div>
@@ -103,7 +109,7 @@ export const PrintableExam: React.FC<PrintableExamProps> = ({
 
         {/* Exam Modules and Questions */}
         <div className="space-y-6">
-          {EXAM_MODULES.map(module => (
+          {activeModules.map(module => (
             <div key={module.id} className="border border-slate-800 rounded-lg p-4 bg-white page-break-inside-avoid">
               
               {/* Module Header */}
@@ -165,7 +171,7 @@ export const PrintableExam: React.FC<PrintableExamProps> = ({
               </tr>
             </thead>
             <tbody>
-              {EXAM_MODULES.map(m => (
+              {activeModules.map(m => (
                 <tr key={m.id}>
                   <td className="border border-slate-900 p-1.5 font-bold text-left">Module {m.moduleNumber} ({m.title})</td>
                   <td className="border border-slate-900 p-1.5">{m.totalPoints}</td>

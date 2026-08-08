@@ -17,6 +17,7 @@ interface ExamHeroProps {
   studentInfo: StudentInfo;
   setStudentInfo: React.Dispatch<React.SetStateAction<StudentInfo>>;
   language: Language;
+  selectedApp?: 'word' | 'excel' | 'powerpoint' | 'access';
   onStartExam: () => void;
   onOpenDataPack: () => void;
   completedTasksCount: number;
@@ -29,6 +30,7 @@ export const ExamHero: React.FC<ExamHeroProps> = ({
   studentInfo,
   setStudentInfo,
   language,
+  selectedApp = 'word',
   onStartExam,
   onOpenDataPack,
   completedTasksCount,
@@ -65,10 +67,10 @@ export const ExamHero: React.FC<ExamHeroProps> = ({
               </span>
             </div>
             <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">
-              {t('examTitle')}
+              {selectedApp === 'powerpoint' ? t('pptExamTitle') : t('examTitle')}
             </h2>
             <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mt-2">
-              {t('examDesc')}
+              {selectedApp === 'powerpoint' ? t('pptExamDesc') : t('examDesc')}
             </p>
           </div>
 

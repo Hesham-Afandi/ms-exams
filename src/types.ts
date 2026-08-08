@@ -79,6 +79,36 @@ export interface WordDocState {
   comments: { text: string; author: string }[];
 }
 
+export interface PptSlide {
+  id: string;
+  slideNumber: number;
+  layout: 'title' | 'content' | 'two_column' | 'comparison' | 'blank';
+  title: string;
+  subtitle?: string;
+  bulletPoints: string[];
+  notes?: string;
+  transition: 'none' | 'push' | 'wipe' | 'morph' | 'fade' | 'dissolve';
+  animation: 'none' | 'fade' | 'fly_in' | 'zoom' | 'spin' | 'bounce';
+  hasSmartArt?: boolean;
+  smartArtNodes?: string[];
+  hasTable?: boolean;
+  tableData?: string[][];
+  hasChart?: boolean;
+  hasImage?: boolean;
+  hasActionButton?: boolean;
+}
+
+export interface PptDocState {
+  aspectRatio: '16:9' | '4:3';
+  theme: 'office_dark' | 'azure_modern' | 'emerald_exec' | 'sunset_gold' | 'light_classic';
+  bgColor: string;
+  footerText: string;
+  showSlideNumbers: boolean;
+  autoTimingSeconds: number;
+  hasBackgroundAudio: boolean;
+  slides: PptSlide[];
+}
+
 export interface OfficeAppSection {
   id: 'word' | 'excel' | 'powerpoint' | 'access';
   title: string;
@@ -92,3 +122,5 @@ export interface OfficeAppSection {
   description: string;
   features: string[];
 }
+
+

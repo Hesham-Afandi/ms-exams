@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { ExamViewMode, Language, StudentInfo, OfficeAppSection } from './types';
-import { EXAM_MODULES } from './data/examData';
+import { EXAM_MODULES, MODEL_ANSWER_RUBRIC } from './data/examData';
+import { PPT_EXAM_MODULES, PPT_MODEL_ANSWER_RUBRIC } from './data/powerpointExamData';
 import { Header } from './components/Header';
 import { OfficeSuiteHome, OFFICE_APPS } from './components/OfficeSuiteHome';
 import { ExamHero } from './components/ExamHero';
 import { ModuleCard } from './components/ModuleCard';
 import { WordSimulator } from './components/WordSimulator';
+import { PowerPointSimulator } from './components/PowerPointSimulator';
 import { PrintableExam } from './components/PrintableExam';
 import { DataPackModal } from './components/DataPackModal';
 import { AnswerKeyModal } from './components/AnswerKeyModal';
 import { ScoreModal } from './components/ScoreModal';
 import { ComingSoonModal } from './components/ComingSoonModal';
-import { MODEL_ANSWER_RUBRIC } from './data/examData';
 import { getTranslation } from './data/translations';
-import { BookOpen, Sparkles, CheckCircle2, Award, Printer, ArrowLeft } from 'lucide-react';
+import { BookOpen, Sparkles, CheckCircle2, Award, Printer, ArrowLeft, Presentation } from 'lucide-react';
 
 export function App() {
 
   const [viewMode, setViewMode] = useState<ExamViewMode>('home');
   const [language, setLanguage] = useState<Language>('ar');
+  const [selectedApp, setSelectedApp] = useState<'word' | 'excel' | 'powerpoint' | 'access'>('word');
   const [completedTaskIds, setCompletedTaskIds] = useState<string[]>([]);
   
   // Timer state (60 minutes default = 3600 seconds)
@@ -40,16 +42,18 @@ export function App() {
   const [isAnswerKeyOpen, setIsAnswerKeyOpen] = useState<boolean>(false);
   const [isScoreReportOpen, setIsScoreReportOpen] = useState<boolean>(false);
   
-  // Coming soon modal for Excel / PowerPoint / Access
+  // Coming soon modal for Excel / Access
   const [selectedComingSoonApp, setSelectedComingSoonApp] = useState<OfficeAppSection | null>(null);
 
   // Simulator highlight scroll link
   const [highlightedCheckId, setHighlightedCheckId] = useState<string | undefined>(undefined);
 
-  // Total tasks & points calculation
-  const allTasks = EXAM_MODULES.flatMap(m => m.tasks);
+  // Active Modules & Tasks calculation based on selectedApp
+  const activeModules = selectedApp === 'powerpoint' ? PPT_EXAM_MODULES : EXAM_MODULES;
+  const activeRubric = selectedApp === 'powerpoint' ? PPT_MODEL_ANSWER_RUBRIC : MODEL_ANSWER_RUBRIC;
+  const allTasks = activeModules.flatMap(m => m.tasks);
   const totalTasksCount = allTasks.length;
-  const totalPoints = EXAM_MODULES.reduce((sum, m) => sum + m.totalPoints, 0);
+  const totalPoints = activeModules.reduce((sum, m) => sum + m.totalPoints, 0);
 
   const earnedPoints = allTasks
     .filter(t => completedTaskIds.includes(t.id))
@@ -76,7 +80,7 @@ export function App() {
     );
   };
 
-  // Auto check task from Word simulator action
+  // Auto check task from simulator action
   const handleAutoCheckTask = (autoCheckId: string) => {
     const matchingTask = allTasks.find(t => t.autoCheckId === autoCheckId);
     if (matchingTask && !completedTaskIds.includes(matchingTask.id)) {
@@ -98,7 +102,9 @@ export function App() {
   };
 
   const handleSelectApp = (appId: 'word' | 'excel' | 'powerpoint' | 'access') => {
-    if (appId === 'word') {
+    if (appId === 'word' || appId === 'powerpoint') {
+      setSelectedApp(appId);
+      setCompletedTaskIds([]);
       setViewMode('exam');
     } else {
       const appData = OFFICE_APPS.find(a => a.id === appId) || null;
@@ -115,6 +121,8 @@ export function App() {
         setViewMode={setViewMode}
         language={language}
         setLanguage={setLanguage}
+        selectedApp={selectedApp}
+        onSelectApp={handleSelectApp}
         timerSeconds={timerSeconds}
         isTimerRunning={isTimerRunning}
         setIsTimerRunning={setIsTimerRunning}
@@ -167,6 +175,7 @@ export function App() {
               studentInfo={studentInfo}
               setStudentInfo={setStudentInfo}
               language={language}
+              selectedApp={selectedApp}
               onStartExam={() => setViewMode('simulator')}
               onOpenDataPack={() => setIsDataPackOpen(true)}
               completedTasksCount={completedTaskIds.length}
@@ -179,8 +188,8 @@ export function App() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-slate-900">
                 {language === 'ar' 
-                  ? 'قائمة وحدات الاختبار (6 وحدات • 100 درجة)'
-                  : 'Exam Modules Checklist (6 Modules • 100 Points)'
+                  ? `قائمة وحدات اختبار ${selectedApp === 'powerpoint' ? 'باوربوينت' : 'وورد'} (6 وحدات • 100 درجة)`
+                  : `${selectedApp === 'powerpoint' ? 'PowerPoint' : 'Word'} Exam Modules Checklist (6 Modules • 100 Points)`
                 }
               </h2>
               <span className="text-xs text-slate-500 font-medium">
@@ -192,7 +201,7 @@ export function App() {
             </div>
 
             <div className="space-y-6">
-              {EXAM_MODULES.map((module, idx) => (
+              {activeModules.map((module, idx) => (
                 <ModuleCard
                   key={module.id}
                   module={module}
@@ -206,7 +215,7 @@ export function App() {
           </div>
         )}
 
-        {/* VIEW 3: LIVE INTERACTIVE WORD SIMULATOR */}
+        {/* VIEW 3: LIVE INTERACTIVE SIMULATOR (WORD or POWERPOINT) */}
         {viewMode === 'simulator' && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="mb-4 flex items-center justify-between">
@@ -223,7 +232,9 @@ export function App() {
                 <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-emerald-600" />
                   <span>
-                    {language === 'ar' ? 'المحاكي المباشر لبرنامج مايكروسوفت وورد' : 'Microsoft Word Live Interactive Simulator'}
+                    {selectedApp === 'powerpoint' 
+                      ? (language === 'ar' ? 'المحاكي المباشر لبرنامج مايكروسوفت باوربوينت' : 'Microsoft PowerPoint Live Interactive Simulator')
+                      : (language === 'ar' ? 'المحاكي المباشر لبرنامج مايكروسوفت وورد' : 'Microsoft Word Live Interactive Simulator')}
                   </span>
                 </h2>
               </div>
@@ -238,11 +249,19 @@ export function App() {
               </div>
             </div>
 
-            <WordSimulator
-              completedTaskIds={completedTaskIds}
-              onAutoCheckTask={handleAutoCheckTask}
-              highlightedCheckId={highlightedCheckId}
-            />
+            {selectedApp === 'powerpoint' ? (
+              <PowerPointSimulator
+                completedTaskIds={completedTaskIds}
+                onAutoCheckTask={handleAutoCheckTask}
+                highlightedCheckId={highlightedCheckId}
+              />
+            ) : (
+              <WordSimulator
+                completedTaskIds={completedTaskIds}
+                onAutoCheckTask={handleAutoCheckTask}
+                highlightedCheckId={highlightedCheckId}
+              />
+            )}
           </div>
         )}
 
@@ -252,6 +271,7 @@ export function App() {
             studentInfo={studentInfo}
             earnedPoints={earnedPoints}
             totalPoints={totalPoints}
+            selectedApp={selectedApp}
           />
         )}
 
@@ -266,10 +286,14 @@ export function App() {
                   </div>
                   <div>
                     <h2 className="text-2xl font-black text-slate-900">
-                      {language === 'ar' ? 'دليل المعلم ونموذج التقييم والإجابة' : 'Teacher Guide & Model Evaluation Rubric'}
+                      {language === 'ar' 
+                        ? `دليل المعلم ونموذج التقييم والإجابة (${selectedApp === 'powerpoint' ? 'باوربوينت' : 'وورد'})`
+                        : `Teacher Guide & Model Evaluation Rubric (${selectedApp === 'powerpoint' ? 'PowerPoint' : 'Word'})`}
                     </h2>
                     <p className="text-xs text-slate-500">
-                      {language === 'ar' ? 'المعايير الرسمية ومسارات الأوامر لتقييم اختبار وورد العملي' : 'Official criteria and command paths for grading MS Word practical exams'}
+                      {language === 'ar' 
+                        ? 'المعايير الرسمية ومسارات الأوامر لتقييم الاختبار العملي' 
+                        : 'Official criteria and command paths for grading practical exams'}
                     </p>
                   </div>
                 </div>
@@ -294,7 +318,7 @@ export function App() {
                     </tr>
                   </thead>
                   <tbody>
-                    {MODEL_ANSWER_RUBRIC.map((rubric, idx) => (
+                    {activeRubric.map((rubric, idx) => (
                       <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50">
                         <td className="p-3 font-bold text-slate-900">{rubric.module}</td>
                         <td className="p-3 text-slate-700">{rubric.criteria}</td>
@@ -333,11 +357,13 @@ export function App() {
       <DataPackModal
         isOpen={isDataPackOpen}
         onClose={() => setIsDataPackOpen(false)}
+        selectedApp={selectedApp}
       />
 
       <AnswerKeyModal
         isOpen={isAnswerKeyOpen}
         onClose={() => setIsAnswerKeyOpen(false)}
+        selectedApp={selectedApp}
       />
 
       <ScoreModal

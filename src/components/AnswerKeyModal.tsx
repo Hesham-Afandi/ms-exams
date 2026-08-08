@@ -1,14 +1,18 @@
 import React from 'react';
-import { MODEL_ANSWER_RUBRIC, EXAM_MODULES } from '../data/examData';
+import { EXAM_MODULES } from '../data/examData';
+import { PPT_EXAM_MODULES } from '../data/powerpointExamData';
 import { BookOpen, X, Lightbulb, Compass, Award } from 'lucide-react';
 
 interface AnswerKeyModalProps {
   isOpen: boolean;
   onClose: () => void;
+  selectedApp?: 'word' | 'excel' | 'powerpoint' | 'access';
 }
 
-export const AnswerKeyModal: React.FC<AnswerKeyModalProps> = ({ isOpen, onClose }) => {
+export const AnswerKeyModal: React.FC<AnswerKeyModalProps> = ({ isOpen, onClose, selectedApp = 'word' }) => {
   if (!isOpen) return null;
+
+  const activeModules = selectedApp === 'powerpoint' ? PPT_EXAM_MODULES : EXAM_MODULES;
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" dir="ltr">
@@ -22,7 +26,9 @@ export const AnswerKeyModal: React.FC<AnswerKeyModalProps> = ({ isOpen, onClose 
             </div>
             <div>
               <h2 className="text-lg font-bold text-white">Teacher Evaluation Guide & Model Answer Key</h2>
-              <p className="text-xs text-slate-300">Exact execution steps and command paths in MS Word for all exam tasks</p>
+              <p className="text-xs text-slate-300">
+                Exact execution steps and command paths in {selectedApp === 'powerpoint' ? 'MS PowerPoint' : 'MS Word'} for all exam tasks
+              </p>
             </div>
           </div>
 
@@ -48,7 +54,7 @@ export const AnswerKeyModal: React.FC<AnswerKeyModalProps> = ({ isOpen, onClose 
 
           {/* Detailed Question Answers */}
           <div className="space-y-6">
-            {EXAM_MODULES.map(module => (
+            {activeModules.map(module => (
               <div key={module.id} className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                 <div className="flex items-center justify-between pb-3 border-b mb-4">
                   <h3 className="font-extrabold text-slate-900 text-base flex items-center gap-2">
