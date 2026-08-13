@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { RAW_EXAM_TEXT, MAIL_MERGE_DATASET } from '../data/examData';
 import { RAW_PPT_PRESENTATION_OUTLINE } from '../data/powerpointExamData';
-import { Download, Copy, Check, FileText, Database, X, Presentation } from 'lucide-react';
+import { RAW_EXCEL_DATASET } from '../data/excelExamData';
+import { RAW_ACCESS_DATASET } from '../data/accessExamData';
+import { Download, Copy, Check, FileText, Database, X, Presentation, FileSpreadsheet } from 'lucide-react';
 
 interface DataPackModalProps {
   isOpen: boolean;
@@ -15,7 +17,11 @@ export const DataPackModal: React.FC<DataPackModalProps> = ({ isOpen, onClose, s
 
   if (!isOpen) return null;
 
-  const activeText = selectedApp === 'powerpoint' ? RAW_PPT_PRESENTATION_OUTLINE : RAW_EXAM_TEXT;
+  const activeText = 
+    selectedApp === 'excel' ? RAW_EXCEL_DATASET :
+    selectedApp === 'powerpoint' ? RAW_PPT_PRESENTATION_OUTLINE :
+    selectedApp === 'access' ? RAW_ACCESS_DATASET :
+    RAW_EXAM_TEXT;
 
   const handleCopyRawText = () => {
     navigator.clipboard.writeText(activeText);

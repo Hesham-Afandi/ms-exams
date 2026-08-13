@@ -1,6 +1,8 @@
 import React from 'react';
 import { EXAM_MODULES } from '../data/examData';
 import { PPT_EXAM_MODULES } from '../data/powerpointExamData';
+import { EXCEL_EXAM_MODULES } from '../data/excelExamData';
+import { ACCESS_EXAM_MODULES } from '../data/accessExamData';
 import { BookOpen, X, Lightbulb, Compass, Award } from 'lucide-react';
 
 interface AnswerKeyModalProps {
@@ -12,7 +14,11 @@ interface AnswerKeyModalProps {
 export const AnswerKeyModal: React.FC<AnswerKeyModalProps> = ({ isOpen, onClose, selectedApp = 'word' }) => {
   if (!isOpen) return null;
 
-  const activeModules = selectedApp === 'powerpoint' ? PPT_EXAM_MODULES : EXAM_MODULES;
+  const activeModules = 
+    selectedApp === 'excel' ? EXCEL_EXAM_MODULES :
+    selectedApp === 'powerpoint' ? PPT_EXAM_MODULES :
+    selectedApp === 'access' ? ACCESS_EXAM_MODULES :
+    EXAM_MODULES;
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" dir="ltr">

@@ -135,8 +135,12 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <FileText className="w-3.5 h-3.5" />
               <span>
-                {selectedApp === 'powerpoint' 
-                  ? (language === 'ar' ? 'مهام باوربوينت' : t('navPptTasks')) 
+                {selectedApp === 'excel'
+                  ? (language === 'ar' ? 'مهام اكسيل' : t('navExcelTasks'))
+                  : selectedApp === 'powerpoint'
+                  ? (language === 'ar' ? 'مهام باوربوينت' : t('navPptTasks'))
+                  : selectedApp === 'access'
+                  ? (language === 'ar' ? 'مهام اكسس' : t('navAccessTasks'))
                   : (language === 'ar' ? 'مهام وورد' : t('navWordTasks'))}
               </span>
             </button>

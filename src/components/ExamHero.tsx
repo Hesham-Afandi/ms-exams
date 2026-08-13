@@ -67,10 +67,10 @@ export const ExamHero: React.FC<ExamHeroProps> = ({
               </span>
             </div>
             <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">
-              {selectedApp === 'powerpoint' ? t('pptExamTitle') : t('examTitle')}
+              {selectedApp === 'excel' ? t('excelExamTitle') : selectedApp === 'powerpoint' ? t('pptExamTitle') : selectedApp === 'access' ? t('accessExamTitle') : t('examTitle')}
             </h2>
             <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mt-2">
-              {selectedApp === 'powerpoint' ? t('pptExamDesc') : t('examDesc')}
+              {selectedApp === 'excel' ? t('excelExamDesc') : selectedApp === 'powerpoint' ? t('pptExamDesc') : selectedApp === 'access' ? t('accessExamDesc') : t('examDesc')}
             </p>
           </div>
 
