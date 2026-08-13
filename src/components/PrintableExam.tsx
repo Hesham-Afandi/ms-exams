@@ -2,6 +2,8 @@ import React from 'react';
 import { StudentInfo } from '../types';
 import { EXAM_MODULES } from '../data/examData';
 import { PPT_EXAM_MODULES } from '../data/powerpointExamData';
+import { EXCEL_EXAM_MODULES } from '../data/excelExamData';
+import { ACCESS_EXAM_MODULES } from '../data/accessExamData';
 import { Printer } from 'lucide-react';
 
 interface PrintableExamProps {
@@ -21,8 +23,17 @@ export const PrintableExam: React.FC<PrintableExamProps> = ({
     window.print();
   };
 
-  const activeModules = selectedApp === 'powerpoint' ? PPT_EXAM_MODULES : EXAM_MODULES;
-  const appTitle = selectedApp === 'powerpoint' ? 'Microsoft PowerPoint Practical Exam' : 'Microsoft Word Practical Exam';
+  const activeModules = 
+    selectedApp === 'excel' ? EXCEL_EXAM_MODULES :
+    selectedApp === 'powerpoint' ? PPT_EXAM_MODULES :
+    selectedApp === 'access' ? ACCESS_EXAM_MODULES :
+    EXAM_MODULES;
+
+  const appTitle = 
+    selectedApp === 'excel' ? 'Microsoft Excel Practical Exam' :
+    selectedApp === 'powerpoint' ? 'Microsoft PowerPoint Practical Exam' :
+    selectedApp === 'access' ? 'Microsoft Access Relational Database Exam' :
+    'Microsoft Word Practical Exam';
 
   return (
     <div className="bg-slate-100 min-h-screen py-6 px-4" dir="ltr">

@@ -2,19 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { ExamViewMode, Language, StudentInfo, OfficeAppSection } from './types';
 import { EXAM_MODULES, MODEL_ANSWER_RUBRIC } from './data/examData';
 import { PPT_EXAM_MODULES, PPT_MODEL_ANSWER_RUBRIC } from './data/powerpointExamData';
+import { EXCEL_EXAM_MODULES, EXCEL_MODEL_ANSWER_RUBRIC } from './data/excelExamData';
+import { ACCESS_EXAM_MODULES, ACCESS_MODEL_ANSWER_RUBRIC } from './data/accessExamData';
 import { Header } from './components/Header';
 import { OfficeSuiteHome, OFFICE_APPS } from './components/OfficeSuiteHome';
 import { ExamHero } from './components/ExamHero';
 import { ModuleCard } from './components/ModuleCard';
 import { WordSimulator } from './components/WordSimulator';
 import { PowerPointSimulator } from './components/PowerPointSimulator';
+import { ExcelSimulator } from './components/ExcelSimulator';
+import { AccessSimulator } from './components/AccessSimulator';
 import { PrintableExam } from './components/PrintableExam';
 import { DataPackModal } from './components/DataPackModal';
 import { AnswerKeyModal } from './components/AnswerKeyModal';
 import { ScoreModal } from './components/ScoreModal';
 import { ComingSoonModal } from './components/ComingSoonModal';
 import { getTranslation } from './data/translations';
-import { BookOpen, Sparkles, CheckCircle2, Award, Printer, ArrowLeft, Presentation } from 'lucide-react';
+import { BookOpen, Sparkles, CheckCircle2, Award, Printer, ArrowLeft, Presentation, FileSpreadsheet, Database } from 'lucide-react';
 
 export function App() {
 
@@ -42,15 +46,25 @@ export function App() {
   const [isAnswerKeyOpen, setIsAnswerKeyOpen] = useState<boolean>(false);
   const [isScoreReportOpen, setIsScoreReportOpen] = useState<boolean>(false);
   
-  // Coming soon modal for Excel / Access
+  // Coming soon modal for unreleased features if any
   const [selectedComingSoonApp, setSelectedComingSoonApp] = useState<OfficeAppSection | null>(null);
 
   // Simulator highlight scroll link
   const [highlightedCheckId, setHighlightedCheckId] = useState<string | undefined>(undefined);
 
   // Active Modules & Tasks calculation based on selectedApp
-  const activeModules = selectedApp === 'powerpoint' ? PPT_EXAM_MODULES : EXAM_MODULES;
-  const activeRubric = selectedApp === 'powerpoint' ? PPT_MODEL_ANSWER_RUBRIC : MODEL_ANSWER_RUBRIC;
+  const activeModules = 
+    selectedApp === 'excel' ? EXCEL_EXAM_MODULES :
+    selectedApp === 'powerpoint' ? PPT_EXAM_MODULES :
+    selectedApp === 'access' ? ACCESS_EXAM_MODULES :
+    EXAM_MODULES;
+
+  const activeRubric = 
+    selectedApp === 'excel' ? EXCEL_MODEL_ANSWER_RUBRIC :
+    selectedApp === 'powerpoint' ? PPT_MODEL_ANSWER_RUBRIC :
+    selectedApp === 'access' ? ACCESS_MODEL_ANSWER_RUBRIC :
+    MODEL_ANSWER_RUBRIC;
+
   const allTasks = activeModules.flatMap(m => m.tasks);
   const totalTasksCount = allTasks.length;
   const totalPoints = activeModules.reduce((sum, m) => sum + m.totalPoints, 0);
@@ -102,14 +116,9 @@ export function App() {
   };
 
   const handleSelectApp = (appId: 'word' | 'excel' | 'powerpoint' | 'access') => {
-    if (appId === 'word' || appId === 'powerpoint') {
-      setSelectedApp(appId);
-      setCompletedTaskIds([]);
-      setViewMode('exam');
-    } else {
-      const appData = OFFICE_APPS.find(a => a.id === appId) || null;
-      setSelectedComingSoonApp(appData);
-    }
+    setSelectedApp(appId);
+    setCompletedTaskIds([]);
+    setViewMode('exam');
   };
 
   return (
@@ -188,8 +197,8 @@ export function App() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-slate-900">
                 {language === 'ar' 
-                  ? `قائمة وحدات اختبار ${selectedApp === 'powerpoint' ? 'باوربوينت' : 'وورد'} (6 وحدات • 100 درجة)`
-                  : `${selectedApp === 'powerpoint' ? 'PowerPoint' : 'Word'} Exam Modules Checklist (6 Modules • 100 Points)`
+                  ? `قائمة وحدات اختبار ${selectedApp === 'excel' ? 'اكسيل' : selectedApp === 'powerpoint' ? 'باوربوينت' : selectedApp === 'access' ? 'اكسس لقواعد البيانات' : 'وورد'} (6 وحدات • 100 درجة)`
+                  : `${selectedApp === 'excel' ? 'Excel' : selectedApp === 'powerpoint' ? 'PowerPoint' : selectedApp === 'access' ? 'Access Database' : 'Word'} Exam Modules Checklist (6 Modules • 100 Points)`
                 }
               </h2>
               <span className="text-xs text-slate-500 font-medium">
@@ -232,8 +241,12 @@ export function App() {
                 <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-emerald-600" />
                   <span>
-                    {selectedApp === 'powerpoint' 
+                    {selectedApp === 'excel' 
+                      ? (language === 'ar' ? 'المحاكي المباشر للجداول الإلكترونية مايكروسوفت اكسيل' : 'Microsoft Excel Live Interactive Simulator')
+                      : selectedApp === 'powerpoint'
                       ? (language === 'ar' ? 'المحاكي المباشر لبرنامج مايكروسوفت باوربوينت' : 'Microsoft PowerPoint Live Interactive Simulator')
+                      : selectedApp === 'access'
+                      ? (language === 'ar' ? 'المحاكي المباشر لقواعد البيانات مايكروسوفت اكسس' : 'Microsoft Access Live Database Simulator')
                       : (language === 'ar' ? 'المحاكي المباشر لبرنامج مايكروسوفت وورد' : 'Microsoft Word Live Interactive Simulator')}
                   </span>
                 </h2>
@@ -249,8 +262,20 @@ export function App() {
               </div>
             </div>
 
-            {selectedApp === 'powerpoint' ? (
+            {selectedApp === 'excel' ? (
+              <ExcelSimulator
+                completedTaskIds={completedTaskIds}
+                onAutoCheckTask={handleAutoCheckTask}
+                highlightedCheckId={highlightedCheckId}
+              />
+            ) : selectedApp === 'powerpoint' ? (
               <PowerPointSimulator
+                completedTaskIds={completedTaskIds}
+                onAutoCheckTask={handleAutoCheckTask}
+                highlightedCheckId={highlightedCheckId}
+              />
+            ) : selectedApp === 'access' ? (
+              <AccessSimulator
                 completedTaskIds={completedTaskIds}
                 onAutoCheckTask={handleAutoCheckTask}
                 highlightedCheckId={highlightedCheckId}

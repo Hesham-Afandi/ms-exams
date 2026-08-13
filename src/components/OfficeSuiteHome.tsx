@@ -52,14 +52,14 @@ export const OFFICE_APPS: OfficeAppSection[] = [
     brandColor: 'bg-emerald-600 hover:bg-emerald-700 text-white',
     lightBg: 'bg-emerald-50/70',
     borderColor: 'border-emerald-200 hover:border-emerald-400',
-    badgeText: 'Coming Soon Insha\'Allah',
-    isAvailable: false,
-    description: 'Upcoming practical exam covering Formulas & Functions (SUM, AVERAGE, IF, VLOOKUP, INDEX/MATCH), PivotTables, and Charts.',
+    badgeText: 'Active • 100 Points Full Exam',
+    isAvailable: true,
+    description: 'Comprehensive practical exam covering Page Setup, Financial Formulas & Functions (SUM, AVERAGE, IF, VLOOKUP), Sorting & Subtotals, Interactive Charts, PivotTables, and Sheet Protection.',
     features: [
-      'Financial Formulas & Conditional Formatting',
-      'PivotTables & Dynamic Data Dashboards',
-      'VLOOKUP & Data Validation Rules',
-      'Interactive Spreadsheet Simulator'
+      '6 Comprehensive Practical Modules',
+      'Live Interactive Spreadsheet Simulator',
+      'VLOOKUP, PivotTables & Slicers',
+      'Teacher Answer Key & Auto Grader'
     ]
   },
   {
@@ -88,14 +88,14 @@ export const OFFICE_APPS: OfficeAppSection[] = [
     brandColor: 'bg-rose-700 hover:bg-rose-800 text-white',
     lightBg: 'bg-rose-50/70',
     borderColor: 'border-rose-200 hover:border-rose-400',
-    badgeText: 'Coming Soon Insha\'Allah',
-    isAvailable: false,
-    description: 'Upcoming practical exam covering Relational Table design, Primary/Foreign Keys, Select & Parameter SQL Queries, Forms, and Reports.',
+    badgeText: 'Active • 100 Points Full Exam',
+    isAvailable: true,
+    description: 'Comprehensive practical exam covering Relational Table design, Primary/Foreign Keys, Select & Action Queries, Custom Forms with Subforms, and Grouped Reports.',
     features: [
-      'Table Schema & Relationship Integrity',
-      'SQL Queries & Expression Builder',
-      'Custom User Forms & Input Controls',
-      'Printable Summary Reports'
+      '6 Comprehensive Practical Modules',
+      'Live Interactive Relational DB Simulator',
+      'Relational Schema & Referential Integrity',
+      'Teacher Answer Key & Auto Grader'
     ]
   }
 ];
@@ -210,6 +210,8 @@ export const OfficeSuiteHome: React.FC<OfficeSuiteHomeProps> = ({
                       {language === 'ar' ? (
                         app.id === 'word' ? 'اختبار مايكروسوفت وورد العملي' :
                         app.id === 'powerpoint' ? 'اختبار مايكروسوفت باوربوينت العملي' :
+                        app.id === 'excel' ? 'اختبار مايكروسوفت اكسيل العملي' :
+                        app.id === 'access' ? 'اختبار مايكروسوفت اكسس لقواعد البيانات' :
                         app.title
                       ) : app.title}
                     </h3>
@@ -223,6 +225,10 @@ export const OfficeSuiteHome: React.FC<OfficeSuiteHomeProps> = ({
                     ? 'اختبار عملي متكامل يغطي إعدادات الصفحة، تنسيق النصوص، الجداول المتقدمة والصيغ، رسومات SmartArt، الجدول الآلي، والدمج البريدي.'
                     : app.id === 'powerpoint'
                     ? 'اختبار عملي متكامل يغطي الشريحة الرئيسية، نسق الألوان، حركات المشغلات، انتقالات Morph، وتصميم العروض التفاعلية.'
+                    : app.id === 'excel'
+                    ? 'اختبار عملي متكامل يغطي الجداول الإلكترونية، الصيغ الحسابية (SUM, AVERAGE, IF, VLOOKUP)، التنسيق الشرطي، الجداول المحورية، والمخططات.'
+                    : app.id === 'access'
+                    ? 'اختبار عملي متكامل يغطي تصميم الجداول والعلاقات، فرض التكامل المرجعي، الاستعلامات المتقدمة والحسابية، النماذج، والتقارير المجمعة.'
                     : app.description
                 ) : app.description}
               </p>
@@ -247,6 +253,16 @@ export const OfficeSuiteHome: React.FC<OfficeSuiteHomeProps> = ({
                           'محاكي تفاعلي مباشر لبرنامج باوربوينت',
                           'مخططات SmartArt وحركات Morph التفاعلية',
                           'دليل إجابة المعلم وفحص التقييم الآلي'
+                        ][idx] : app.id === 'excel' ? [
+                          '6 وحدات اختبارية شاملة (100 درجة)',
+                          'محاكي تفاعلي مباشر للجداول الإلكترونية',
+                          'دوال VLOOKUP والجداول المحورية PivotTables',
+                          'دليل إجابة المعلم وفحص التقييم الآلي'
+                        ][idx] : app.id === 'access' ? [
+                          '6 وحدات اختبارية شاملة (100 درجة)',
+                          'محاكي تفاعلي مباشر لقواعد البيانات',
+                          'مخطط العلاقات ونماذج الاستعلامات والتقارير',
+                          'دليل إجابة المعلم وفحص التقييم الآلي'
                         ][idx] : feat
                       ) : feat}
                     </span>
@@ -269,7 +285,17 @@ export const OfficeSuiteHome: React.FC<OfficeSuiteHomeProps> = ({
             >
               <span>
                 {app.isAvailable 
-                  ? (language === 'ar' ? (app.id === 'powerpoint' ? 'ابدأ اختبار باوربوينت الآن' : 'ابدأ اختبار وورد الآن') : (app.id === 'powerpoint' ? 'Start PowerPoint Exam Now' : t('startWordExam'))) 
+                  ? (language === 'ar' ? (
+                      app.id === 'powerpoint' ? 'ابدأ اختبار باوربوينت الآن' : 
+                      app.id === 'excel' ? 'ابدأ اختبار اكسيل الآن' : 
+                      app.id === 'access' ? 'ابدأ اختبار اكسس الآن' : 
+                      'ابدأ اختبار وورد الآن'
+                    ) : (
+                      app.id === 'powerpoint' ? 'Start PowerPoint Exam Now' : 
+                      app.id === 'excel' ? 'Start Excel Exam Now' : 
+                      app.id === 'access' ? 'Start Access Exam Now' : 
+                      t('startWordExam')
+                    )) 
                   : (language === 'ar' ? 'قريباً إن شاء الله' : t('comingSoon'))}
               </span>
               <ArrowRight className={`w-4 h-4 ${language === 'ar' ? 'rotate-180' : ''}`} />
